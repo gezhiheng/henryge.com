@@ -310,6 +310,10 @@
   .prose .post-image {
     cursor: zoom-in;
   }
+  .prose .post-image:focus-visible {
+    outline: 3px solid color-mix(in oklab, var(--foreground) 38%, transparent);
+    outline-offset: -6px;
+  }
   .prose hr {
     @apply my-10 border-border;
   }

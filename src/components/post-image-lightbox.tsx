@@ -1,7 +1,8 @@
 'use client'
 
+import { X } from 'lucide-react'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 interface PostImageLightboxProps {
@@ -13,46 +14,114 @@ interface ActiveImage {
   src: string
 }
 
+interface PointerStart {
+  image: HTMLImageElement
+  pointerId: number
+  x: number
+  y: number
+}
+
+const TAP_MOVE_THRESHOLD = 8
+
 export default function PostImageLightbox ({
   containerId
 }: PostImageLightboxProps) {
   const [activeImage, setActiveImage] = useState<ActiveImage | null>(null)
   const [isMounted, setIsMounted] = useState(false)
+  const pointerStartRef = useRef<PointerStart | null>(null)
 
   useEffect(() => {
     setIsMounted(true)
   }, [])
 
   useEffect(() => {
-    const handleClick = (event: MouseEvent) => {
-      const target = event.target
+    const getPostImage = (target: EventTarget | null) => {
       if (!(target instanceof HTMLImageElement)) {
-        return
+        return null
       }
 
       const container = document.getElementById(containerId)
       if (!container || !container.contains(target)) {
-        return
+        return null
       }
 
       if (!target.classList.contains('post-image')) {
-        return
+        return null
       }
 
-      const src = target.getAttribute('src')
+      return target
+    }
+
+    const openImage = (image: HTMLImageElement) => {
+      const src = image.getAttribute('src')
       if (!src) {
         return
       }
 
       setActiveImage({
         src,
-        alt: target.getAttribute('alt') ?? 'Post image'
+        alt: image.getAttribute('alt') ?? 'Post image'
       })
     }
 
-    document.addEventListener('click', handleClick)
+    const handlePointerDown = (event: PointerEvent) => {
+      const image = getPostImage(event.target)
+      if (!image || !event.isPrimary) {
+        pointerStartRef.current = null
+        return
+      }
+
+      pointerStartRef.current = {
+        image,
+        pointerId: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+      }
+    }
+
+    const handlePointerUp = (event: PointerEvent) => {
+      const start = pointerStartRef.current
+      pointerStartRef.current = null
+
+      if (!start || start.pointerId !== event.pointerId) {
+        return
+      }
+
+      const moved = Math.hypot(event.clientX - start.x, event.clientY - start.y)
+      if (moved > TAP_MOVE_THRESHOLD) {
+        return
+      }
+
+      openImage(start.image)
+    }
+
+    const handlePointerCancel = () => {
+      pointerStartRef.current = null
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Enter' && event.key !== ' ') {
+        return
+      }
+
+      const image = getPostImage(event.target)
+      if (!image) {
+        return
+      }
+
+      event.preventDefault()
+      openImage(image)
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown, { passive: true })
+    document.addEventListener('pointerup', handlePointerUp, { passive: true })
+    document.addEventListener('pointercancel', handlePointerCancel, { passive: true })
+    document.addEventListener('keydown', handleKeyDown)
     return () => {
-      document.removeEventListener('click', handleClick)
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('pointerup', handlePointerUp)
+      document.removeEventListener('pointercancel', handlePointerCancel)
+      document.removeEventListener('keydown', handleKeyDown)
     }
   }, [containerId])
 
@@ -89,6 +158,17 @@ export default function PostImageLightbox ({
       aria-modal='true'
       aria-label='Image preview'
     >
+      <button
+        type='button'
+        className='absolute top-4 right-4 z-10 flex size-11 items-center justify-center rounded-full border border-border/70 bg-background/85 text-foreground shadow-sm backdrop-blur transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60'
+        onClick={(event) => {
+          event.stopPropagation()
+          setActiveImage(null)
+        }}
+        aria-label='关闭图片预览'
+      >
+        <X className='h-5 w-5' />
+      </button>
       <div
         className='relative h-[90vh] w-[min(96vw,1600px)] cursor-zoom-out'
         onClick={() => setActiveImage(null)}

@@ -136,6 +136,9 @@ function rehypeImageDefaults() {
       const src = typeof node.properties?.src === 'string'
         ? versionPublicAssetSrc(node.properties.src)
         : node.properties?.src
+      const ariaLabel = typeof node.properties?.alt === 'string' && node.properties.alt
+        ? `查看大图：${node.properties.alt}`
+        : '查看图片大图'
 
       node.properties = {
         ...node.properties,
@@ -143,6 +146,9 @@ function rehypeImageDefaults() {
         loading: 'lazy',
         decoding: 'async',
         className: ['post-image'],
+        role: 'button',
+        tabIndex: 0,
+        ...{ 'aria-label': ariaLabel },
       }
     })
   }

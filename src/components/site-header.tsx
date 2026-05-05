@@ -14,6 +14,8 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { siteConfig } from '@/lib/site'
 
+const navItemClass = 'flex size-11 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60'
+
 export default function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
   type Theme = 'light' | 'dark' | 'system'
@@ -105,39 +107,39 @@ export default function SiteHeader() {
           : 'border-b border-transparent bg-transparent'
       }`}
     >
-      <div className="mx-auto flex w-full max-w-2xl items-center justify-end px-6 py-3 md:px-0">
-        <nav className="flex items-center gap-2 md:gap-3">
+      <div className="mx-auto flex w-full max-w-2xl items-center justify-end px-4 py-3 md:px-0">
+        <nav className="flex items-center gap-1 md:gap-3">
           <Link
             href="/"
-            className="rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
+            className={navItemClass}
             aria-label="Home"
           >
             <Home className="h-4.5 w-4.5" />
           </Link>
           <Link
             href="/posts"
-            className="rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
+            className={navItemClass}
             aria-label="Blog"
           >
             <BookOpenText className="h-4.5 w-4.5" />
           </Link>
           <Link
             href="/projects"
-            className="rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
+            className={navItemClass}
             aria-label="Projects"
           >
             <FolderKanban className="h-4.5 w-4.5" />
           </Link>
           <Link
             href={siteConfig.links.github}
-            className="rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
+            className={navItemClass}
             aria-label="Github"
           >
             <Github className="h-4.5 w-4.5" />
           </Link>
           <Link
             href={siteConfig.links.twitter}
-            className="rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
+            className={navItemClass}
             aria-label="Twitter"
           >
             <Twitter className="h-4.5 w-4.5" />
@@ -145,7 +147,7 @@ export default function SiteHeader() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
+            className={navItemClass}
             aria-label="Toggle dark mode"
           >
             {theme === 'system'

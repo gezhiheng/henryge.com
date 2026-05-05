@@ -18,10 +18,24 @@ export default function BackLink({
   const router = useRouter()
 
   const handleClick = () => {
-    if (typeof window !== 'undefined' && window.history.length > 1) {
-      router.back()
-      return
+    if (typeof window !== 'undefined') {
+      let referrerUrl: URL | null = null
+
+      try {
+        referrerUrl = document.referrer ? new URL(document.referrer) : null
+      }
+      catch {
+        referrerUrl = null
+      }
+
+      const hasSameOriginReferrer = referrerUrl?.origin === window.location.origin
+
+      if (hasSameOriginReferrer && window.history.length > 1) {
+        router.back()
+        return
+      }
     }
+
     router.push(fallbackHref)
   }
 

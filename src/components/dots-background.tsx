@@ -75,6 +75,8 @@ export default function DotsBackground() {
       return
     }
 
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+
     const resize = () => {
       const dpr = window.devicePixelRatio || 1
       const width = window.innerWidth
@@ -89,10 +91,10 @@ export default function DotsBackground() {
       pointsRef.current = buildPoints(width, height)
     }
 
-    const draw = () => {
+    const drawFrame = (animated: boolean) => {
       const width = window.innerWidth
       const height = window.innerHeight
-      const t = Date.now() / 2500
+      const t = animated ? Date.now() / 2500 : 0
       const isDark = document.documentElement.classList.contains('dark')
       const dotRgb = isDark ? '120, 120, 120' : '180, 180, 180'
 
@@ -114,20 +116,50 @@ export default function DotsBackground() {
         ctx.arc(x, y, 1, 0, Math.PI * 2)
         ctx.fill()
       }
+    }
 
+    const draw = () => {
+      drawFrame(true)
       rafRef.current = window.requestAnimationFrame(draw)
     }
 
-    resize()
-    draw()
-
-    window.addEventListener('resize', resize)
-
-    return () => {
+    const stopAnimation = () => {
       if (rafRef.current !== null) {
         window.cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
       }
-      window.removeEventListener('resize', resize)
+    }
+
+    const syncAnimation = () => {
+      stopAnimation()
+
+      if (motionQuery.matches || document.hidden) {
+        drawFrame(false)
+        return
+      }
+
+      draw()
+    }
+
+    resize()
+    syncAnimation()
+
+    const handleResize = () => {
+      resize()
+      if (motionQuery.matches || document.hidden) {
+        drawFrame(false)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    document.addEventListener('visibilitychange', syncAnimation)
+    motionQuery.addEventListener('change', syncAnimation)
+
+    return () => {
+      stopAnimation()
+      window.removeEventListener('resize', handleResize)
+      document.removeEventListener('visibilitychange', syncAnimation)
+      motionQuery.removeEventListener('change', syncAnimation)
     }
   }, [])
 
