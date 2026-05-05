@@ -221,7 +221,7 @@
     scrollbar-gutter: stable;
     scroll-snap-type: x proximity;
     scroll-behavior: smooth;
-    touch-action: pan-x;
+    touch-action: pan-x pan-y;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
     cursor: grab;
