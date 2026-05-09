@@ -3,7 +3,7 @@ Henry's blog built with Next.js App Router, Markdown content, and Tailwind CSS.
 ## Requirements
 
 - Node.js 20+
-- pnpm 9+
+- pnpm 10.33.2 via Corepack
 
 ## Local development
 
