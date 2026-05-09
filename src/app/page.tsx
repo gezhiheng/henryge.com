@@ -1,16 +1,7 @@
-import type { ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Separator } from '@/components/ui/separator'
 import { getAllPosts } from '../lib/posts'
-
-function HandUnderline({ children }: { children: ReactNode }) {
-  return (
-    <span className="relative inline-block before:absolute before:left-[2%] before:right-[8%] before:bottom-0 before:h-0.5 before:-rotate-1 before:rounded-full before:bg-sky-400/75 before:content-[''] after:absolute after:left-0 after:right-[3%] after:bottom-0.75 after:h-0.5 after:rotate-1 after:rounded-full after:bg-blue-500/40 after:content-[''] dark:before:bg-sky-300/40 dark:after:bg-blue-300/35">
-      {children}
-    </span>
-  )
-}
 
 export default function Home() {
   const posts = getAllPosts()
@@ -33,10 +24,13 @@ export default function Home() {
           />
         </div>
         <p className="text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
-          <span>Hey! 我是葛智恒，A.K.A. Henry Ge，一名前端开发工程师。</span>
+          <span>离开世界之前，一切都是过程。</span>
         </p>
         <p className="text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
-          <span>目前工作中主要使用 Vue.js 及其周边工具链，偶尔参与开源。做过 Java 开发，也曾在创业公司独立负责过项目。最近对 React.js / Next.js 感兴趣，正在系统学习中。</span>
+          <span>Hey! 我是葛智恒，A.K.A. Henry Ge，目前是一名全栈开发工程师。</span>
+        </p>
+        <p className="text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
+          <span>目前在做 AI Native 全栈，偶尔参与开源。早期从事 Java 后端开发，后转向前端方向，也曾在创业公司独立负责过项目。</span>
         </p>
         <p className="text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
           <span>我一直以来的观念是「不给自己设限」，所以有什么感兴趣的技术都会接触。比如曾经学过一段时间 Rust，很喜欢它明确语义的设计哲学和优雅的错误处理。</span>
@@ -46,9 +40,6 @@ export default function Home() {
         </p>
         <p className="text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
           <span>目前在不断探索与尝试，希望找到一个真正热爱的方向，长期投入，同时也保留对生活本身的感受与享受。</span>
-        </p>
-        <p className="text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
-          <HandUnderline>离开世界之前，一切都是过程。</HandUnderline>
         </p>
       </section>
 
