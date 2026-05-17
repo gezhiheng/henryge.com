@@ -22,6 +22,17 @@ interface PointerStart {
 }
 
 const TAP_MOVE_THRESHOLD = 8
+const SCROLL_KEYS = new Set([
+  ' ',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowUp',
+  'End',
+  'Home',
+  'PageDown',
+  'PageUp',
+])
 
 export default function PostImageLightbox ({
   containerId
@@ -130,18 +141,45 @@ export default function PostImageLightbox ({
       return
     }
 
+    const scrollY = window.scrollY
+    const previousHtmlOverflow = document.documentElement.style.overflow
     const previousOverflow = document.body.style.overflow
+    const previousPosition = document.body.style.position
+    const previousTop = document.body.style.top
+    const previousWidth = document.body.style.width
+    document.documentElement.style.overflow = 'hidden'
     document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.width = '100%'
+
+    const preventScroll = (event: Event) => {
+      event.preventDefault()
+    }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setActiveImage(null)
+        return
+      }
+
+      if (SCROLL_KEYS.has(event.key)) {
+        event.preventDefault()
       }
     }
 
+    window.addEventListener('wheel', preventScroll, { passive: false, capture: true })
+    window.addEventListener('touchmove', preventScroll, { passive: false, capture: true })
     window.addEventListener('keydown', handleKeyDown)
     return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow
       document.body.style.overflow = previousOverflow
+      document.body.style.position = previousPosition
+      document.body.style.top = previousTop
+      document.body.style.width = previousWidth
+      window.scrollTo(0, scrollY)
+      window.removeEventListener('wheel', preventScroll, { capture: true })
+      window.removeEventListener('touchmove', preventScroll, { capture: true })
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [activeImage])
