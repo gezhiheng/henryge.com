@@ -30,7 +30,7 @@ export default function Home() {
           <span>Hey! 我是葛智恒，A.K.A. Henry Ge，目前是一名全栈开发工程师。</span>
         </p>
         <p className="text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
-          <span>目前在做 AI Native 全栈，偶尔参与开源。早期从事 Java 后端开发，后转向前端方向，也曾在创业公司独立负责过项目。</span>
+          <span>我偶尔参与开源，早期从事 Java 后端开发，后转向前端方向，也曾在创业公司独立负责过项目。</span>
         </p>
         <p className="text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
           <span>我一直以来的观念是「不给自己设限」，所以有什么感兴趣的技术都会接触。比如曾经学过一段时间 Rust，很喜欢它明确语义的设计哲学和优雅的错误处理。</span>
