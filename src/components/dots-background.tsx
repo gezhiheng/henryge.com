@@ -150,6 +150,16 @@ export default function DotsBackground() {
         drawFrame(false)
       }
     }
+    const handleThemeChange = () => {
+      if (motionQuery.matches || document.hidden) {
+        drawFrame(false)
+      }
+    }
+    const themeObserver = new MutationObserver(handleThemeChange)
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
 
     window.addEventListener('resize', handleResize)
     document.addEventListener('visibilitychange', syncAnimation)
@@ -160,6 +170,7 @@ export default function DotsBackground() {
       window.removeEventListener('resize', handleResize)
       document.removeEventListener('visibilitychange', syncAnimation)
       motionQuery.removeEventListener('change', syncAnimation)
+      themeObserver.disconnect()
     }
   }, [])
 
