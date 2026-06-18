@@ -113,6 +113,7 @@ export default function SiteHeader() {
             href="/"
             className={navItemClass}
             aria-label="Home"
+            title="Home"
           >
             <Home className="h-4.5 w-4.5" />
           </Link>
@@ -120,6 +121,7 @@ export default function SiteHeader() {
             href="/posts"
             className={navItemClass}
             aria-label="Blog"
+            title="Blog"
           >
             <BookOpenText className="h-4.5 w-4.5" />
           </Link>
@@ -127,6 +129,7 @@ export default function SiteHeader() {
             href="/projects"
             className={navItemClass}
             aria-label="Projects"
+            title="Projects"
           >
             <FolderKanban className="h-4.5 w-4.5" />
           </Link>
@@ -134,6 +137,7 @@ export default function SiteHeader() {
             href={siteConfig.links.github}
             className={navItemClass}
             aria-label="Github"
+            title="Github"
           >
             <Github className="h-4.5 w-4.5" />
           </Link>
@@ -141,6 +145,7 @@ export default function SiteHeader() {
             href={siteConfig.links.twitter}
             className={navItemClass}
             aria-label="Twitter"
+            title="Twitter"
           >
             <Twitter className="h-4.5 w-4.5" />
           </Link>
@@ -149,6 +154,7 @@ export default function SiteHeader() {
             onClick={toggleTheme}
             className={navItemClass}
             aria-label="Toggle dark mode"
+            title="Toggle dark mode"
           >
             {theme === 'system'
               ? (
