@@ -9,7 +9,7 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-12">
-      <section className="space-y-5 text-pretty md:space-y-6">
+      <section className="space-y-5 md:space-y-6">
         <div className="flex flex-wrap items-center gap-4">
           <h1 className="text-3xl font-semibold md:text-4xl">
             Henry Ge
