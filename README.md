@@ -89,8 +89,9 @@ server {
 
 ## CI/CD
 
-- CI runs on pull requests and `main` (lint + build).
-- CD builds and pushes a Docker image to GHCR, then deploys over SSH if secrets are set.
+- CI runs on pull requests or manual dispatch (lint + build).
+- CD runs on `main` or manual dispatch, builds and pushes a Docker image to GHCR, then deploys over SSH if secrets are set.
+- Docker builds use GitHub Actions cache and the server deploys the immutable `${GITHUB_SHA}` image tag instead of relying on a mutable `latest` pull.
 
 Required secrets for deployment:
 
@@ -102,7 +103,7 @@ Deploy steps (high level):
 1) Build Docker image from `Dockerfile`.
 2) Push to `ghcr.io/<owner>/<repo>`.
 3) SSH to the server and run:
-   - `docker pull ghcr.io/<owner>/<repo>:latest`
+   - `docker pull ghcr.io/<owner>/<repo>:<commit-sha>`
    - restart container `henrys-blog-next` on port `3000:3000`
 
 ## Notes

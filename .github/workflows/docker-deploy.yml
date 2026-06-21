@@ -3,6 +3,11 @@ name: Docker Build & Deploy
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}
@@ -16,16 +21,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          run_install: false
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to GHCR
@@ -43,6 +38,8 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy:
     needs: build-and-push
@@ -74,12 +71,13 @@ jobs:
           command_timeout: 30m
           script: |
             set -e
+            IMAGE="${{ env.IMAGE_NAME }}:${{ github.sha }}"
             cd ~/projects/henrys-blog-next
             docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" -p "${{ secrets.GHCR_TOKEN }}"
-            docker pull "${{ env.IMAGE_NAME }}:latest"
-            docker stop henrys-blog-next || true
-            docker rm henrys-blog-next || true
+            docker pull "$IMAGE"
+            docker rm -f henrys-blog-next || true
             docker run -d --restart unless-stopped \
               --name henrys-blog-next \
               -p 3000:3000 \
-              "${{ env.IMAGE_NAME }}:latest"
+              "$IMAGE"
+            docker image prune -f --filter "until=168h" || true
