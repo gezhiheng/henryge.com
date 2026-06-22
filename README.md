@@ -111,3 +111,13 @@ Deploy steps (high level):
 - Production runs via Docker on port 3000; Nginx can reverse proxy to it.
 - TypeScript build errors are ignored for deployment (`next.config.ts`).
 - Next.js output mode is `standalone` to reduce image size and speed up pulls.
+
+## Manual deployment (local build + upload)
+
+Build the Next.js standalone release locally, upload it to the server, and switch the remote `systemd` service:
+
+```bash
+./scripts/deploy-local.sh
+```
+
+The script deploys the current Git `HEAD` only. Commit or stash local changes first, or set `ALLOW_DIRTY=1` if you explicitly want to deploy while the working tree is dirty.
