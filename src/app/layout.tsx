@@ -61,10 +61,10 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${merriweather.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        <div className="min-h-screen">
+        <div className="flex min-h-screen flex-col">
           <DotsBackground />
           <SiteHeader />
-          <main className="mx-auto w-full max-w-5xl px-6 pb-16 pt-10">
+          <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 pt-10">
             {children}
           </main>
           <SiteFooter />
