@@ -187,7 +187,33 @@
   }
   .prose ul,
   .prose ol {
-    @apply mt-5 space-y-2 pl-6 text-muted-foreground;
+    @apply mt-5 space-y-2 text-muted-foreground;
+  }
+  .prose ul {
+    @apply list-disc pl-6;
+  }
+  .prose ol {
+    @apply list-none pl-0;
+    counter-reset: prose-ordered-list;
+  }
+  .prose ol > li {
+    counter-increment: prose-ordered-list;
+    display: grid;
+    grid-template-columns: minmax(1.5rem, max-content) minmax(0, 1fr);
+    column-gap: 0.5rem;
+    align-items: start;
+  }
+  .prose ol > li::before {
+    content: counter(prose-ordered-list) ".";
+    grid-column: 1;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .prose ol > li > * {
+    grid-column: 2;
+  }
+  .prose li > p {
+    @apply mt-0;
   }
   .prose blockquote {
     @apply mt-6 border-l-2 border-border pl-5 text-foreground;
@@ -196,7 +222,17 @@
     @apply rounded bg-muted px-1.5 py-0.5 font-mono text-sm text-foreground;
   }
   .prose pre {
-    @apply mt-6 overflow-x-auto rounded-2xl border border-border bg-muted p-5 text-sm text-foreground;
+    @apply mt-6 overflow-x-auto rounded-md border border-border bg-muted/70 px-5 py-4 text-[0.88rem] leading-6 text-foreground;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "calt" 0;
+    tab-size: 2;
+    white-space: pre;
+  }
+  .prose pre code {
+    @apply block rounded-none bg-transparent p-0 text-inherit;
+    font-family: inherit;
+    line-height: inherit;
   }
   .prose img {
     @apply mt-6 rounded-2xl border border-border bg-muted;
