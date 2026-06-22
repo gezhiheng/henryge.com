@@ -36,7 +36,7 @@ export default function Home() {
           <span>我一直以来的观念是「不给自己设限」，所以有什么感兴趣的技术都会接触。比如曾经学过一段时间 Rust，很喜欢它明确语义的设计哲学和优雅的错误处理。</span>
         </p>
         <p className="text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
-          <span>代码之外和工作之余，我喜欢打游戏、追番、阅读、打篮球、看球赛和弹尤克里里。喜欢的书包括《只是为了好玩》、《哈利·波特》和《明朝那些事儿》。另外我还是斯蒂芬库里和金州勇士的忠实球迷，Let&apos;s go Warriors!</span>
+          <span>代码之外和工作之余，我喜欢打游戏、追番、阅读、打篮球、看球赛和弹尤克里里。另外我还是斯蒂芬库里和金州勇士的忠实球迷，Let&apos;s go Warriors!</span>
         </p>
         <p className="text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
           <span>目前在不断探索与尝试，希望找到一个真正热爱的方向，长期投入，同时也保留对生活本身的感受与享受。</span>
