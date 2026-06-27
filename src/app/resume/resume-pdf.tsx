@@ -212,8 +212,7 @@ const styles = StyleSheet.create({
   educationSchool: {
     marginRight: 6,
     fontSize: 9.2,
-    fontFamily: 'ResumeBold',
-    color: '#202124',
+    color: '#555',
   },
   educationText: {
     marginRight: 6,

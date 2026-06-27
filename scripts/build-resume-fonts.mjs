@@ -1,5 +1,5 @@
-// Dev-only tool: regenerates subsetted Noto Sans SC fonts from resume-data.ts.
-// Run manually with `pnpm build:fonts` after updating resume data.
+// Dev-only tool: regenerates subsetted Noto Sans SC fonts from src/app/resume/resume.md.
+// Run manually with `pnpm build:fonts` after updating the resume markdown.
 // Requires Python fonttools (pip install fonttools) and curl.
 // The output files in public/fonts/ are committed to git — no Python needed at build time.
 import { execSync } from 'node:child_process'
@@ -13,7 +13,7 @@ const vfPath = path.join(projectRoot, '.next', 'cache', 'NotoSansSC-VF.ttf')
 const bodyFull = path.join(projectRoot, '.next', 'cache', 'NotoSansSC-Body-full.ttf')
 const regularFull = path.join(projectRoot, '.next', 'cache', 'NotoSansSC-Regular-full.ttf')
 const boldFull = path.join(projectRoot, '.next', 'cache', 'NotoSansSC-Bold-full.ttf')
-const dataSource = path.join(projectRoot, 'src', 'app', 'resume', 'resume-data.ts')
+const dataSource = path.join(projectRoot, 'src', 'app', 'resume', 'resume.md')
 const pdfSource = path.join(projectRoot, 'src', 'app', 'resume', 'resume-pdf.tsx')
 const combinedTextPath = path.join(projectRoot, '.next', 'cache', 'resume-font-text.txt')
 
@@ -45,7 +45,7 @@ async function buildFonts() {
   await ensureDir(path.join(fontsDir, 'public'))
 
   // Combine all source files that contain text rendered into the PDF
-  // (resume-data.ts for content, resume-pdf.tsx for section titles/labels)
+  // (resume.md for content, resume-pdf.tsx for section titles/labels)
   const dataText = await fs.readFile(dataSource, 'utf8')
   const pdfText = await fs.readFile(pdfSource, 'utf8')
   await ensureDir(combinedTextPath)

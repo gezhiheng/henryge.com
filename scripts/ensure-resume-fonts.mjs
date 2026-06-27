@@ -4,22 +4,32 @@ import process from 'node:process'
 
 const projectRoot = process.cwd()
 const sourceFontsDir = path.join(projectRoot, 'public', 'fonts')
+const sourceResumeMarkdown = path.join(projectRoot, 'src', 'app', 'resume', 'resume.md')
 const standalonePublicDir = path.join(projectRoot, '.next', 'standalone', 'public', 'fonts')
+const standaloneResumeMarkdown = path.join(projectRoot, '.next', 'standalone', 'src', 'app', 'resume', 'resume.md')
 
 async function ensureResumeFontsInStandalone() {
   const sourceStats = await fs.stat(sourceFontsDir).catch(() => null)
+  const resumeMarkdownStats = await fs.stat(sourceResumeMarkdown).catch(() => null)
   const standaloneStats = await fs.stat(path.join(projectRoot, '.next', 'standalone')).catch(() => null)
 
-  if (!sourceStats?.isDirectory() || !standaloneStats?.isDirectory()) {
+  if (!standaloneStats?.isDirectory()) {
     return
   }
 
-  await fs.mkdir(standalonePublicDir, { recursive: true })
-  await fs.cp(sourceFontsDir, standalonePublicDir, { force: true, recursive: true })
+  if (sourceStats?.isDirectory()) {
+    await fs.mkdir(standalonePublicDir, { recursive: true })
+    await fs.cp(sourceFontsDir, standalonePublicDir, { force: true, recursive: true })
+  }
+
+  if (resumeMarkdownStats?.isFile()) {
+    await fs.mkdir(path.dirname(standaloneResumeMarkdown), { recursive: true })
+    await fs.copyFile(sourceResumeMarkdown, standaloneResumeMarkdown)
+  }
 }
 
 ensureResumeFontsInStandalone().catch((error) => {
-  console.error('Failed to copy resume fonts into standalone output.')
+  console.error('Failed to copy resume assets into standalone output.')
   console.error(error)
   process.exit(1)
 })
