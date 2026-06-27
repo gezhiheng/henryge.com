@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     marginBottom: 4.5,
   },
   skillCategory: {
-    width: 62,
+    width: 88,
     fontSize: 9.3,
     color: '#252525',
   },
@@ -281,10 +281,7 @@ function ResumeDocument() {
           <View style={styles.sectionRule} />
           {skills.map(group => (
             <View key={group.category} style={styles.skillGroup}>
-              <Text style={styles.skillCategory}>
-                {group.category}
-                ：
-              </Text>
+              <Text style={styles.skillCategory} wrap={false}>{`${group.category}：`}</Text>
               <Text style={styles.skillItems}>{textWithStrong(group.items.join('、'))}</Text>
             </View>
           ))}
