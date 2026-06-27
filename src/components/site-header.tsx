@@ -11,6 +11,7 @@ import {
   Twitter,
 } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { siteConfig } from '@/lib/site'
 
@@ -83,6 +84,13 @@ export default function SiteHeader() {
     }
   }, [])
 
+  const pathname = usePathname()
+  const isResume = pathname === '/resume'
+
+  if (isResume) {
+    return null
+  }
+
   const toggleTheme = () => {
     const nextOrder: Record<Theme, Theme> = {
       dark: 'light',
@@ -99,14 +107,14 @@ export default function SiteHeader() {
     }
   }
 
+  const headerClass = `sticky top-0 z-20 transition-colors duration-300 ${
+    isScrolled
+      ? 'border-b border-border/60 bg-background/70 backdrop-blur'
+      : 'border-b border-transparent bg-transparent'
+  }`
+
   return (
-    <header
-      className={`sticky top-0 z-20 transition-colors duration-300 ${
-        isScrolled
-          ? 'border-b border-border/60 bg-background/70 backdrop-blur'
-          : 'border-b border-transparent bg-transparent'
-      }`}
-    >
+    <header className={headerClass}>
       <div className="mx-auto flex w-full max-w-2xl items-center justify-end px-4 py-3 md:px-0">
         <nav className="flex items-center gap-1 md:gap-3">
           <Link
