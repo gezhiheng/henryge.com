@@ -37,9 +37,9 @@ website: henryge.com
 
 JSON 驱动演示文稿平台
 
-链接：[官网](https://pipto.henryge.com/) [GitHub](https://github.com/gezhiheng/pipto) 
+链接：[网址](https://pipto.henryge.com/) [GitHub](https://github.com/gezhiheng/pipto) 
 
-技术栈：React + Next.js + Vite + TypeScript + Monaco Editor
+技术栈：React + Playwright + Vite + TypeScript + Monaco Editor
 
 - 开发 JSON-native 演示文稿工具链，支持预览、PPTX 导入导出与主题定制
 - 用 pnpm Monorepo 管理官网、playground 与 6 个 npm 包
@@ -52,7 +52,7 @@ JSON 驱动演示文稿平台
 
 射击训练App
 
-链接：[介绍](https://showcase.henryge.com/targiyio.html)
+链接：[网址](https://showcase.henryge.com/targiyio.html)
 
 技术栈：Vue3 + Capacitor + ECharts + MediaPipe + Express + MongoDB
 
@@ -67,7 +67,7 @@ JSON 驱动演示文稿平台
 
 基于 Vue 3 的可视化上位机软件
 
-链接：[介绍](https://showcase.henryge.com/hdrive.html)
+链接：[网址](https://showcase.henryge.com/hdrive.html)
 
 - 基于 Vue 3 + Vite 开发，通过 Web Serial API 与 Modbus 协议实现上位机实时数据轮询与解析
 - 集成 ECharts，支持多模式（速度、力矩、零力矩）数据可视化与动态切换
@@ -79,7 +79,7 @@ JSON 驱动演示文稿平台
 
 基于人脸识别的仿生机械头控制
 
-链接：[介绍](https://showcase.henryge.com/face2bot.html) [演示](https://face2bot.henryge.com/)
+链接：[网址](https://showcase.henryge.com/face2bot.html)
 
 - 使用 Mediapipe 提供的人脸检测模型，识别 468 个面部关键点坐标
 - 选取有代表性的关键点（如眉毛、眼睑、嘴唇等），并计算它们之间的距离或轴向偏移
