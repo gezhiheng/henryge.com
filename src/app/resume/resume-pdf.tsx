@@ -20,6 +20,11 @@ Font.register({
 })
 
 Font.register({
+  family: 'ResumeRegular',
+  src: path.join(process.cwd(), 'public/fonts/NotoSansSC-Regular.ttf'),
+})
+
+Font.register({
   family: 'ResumeBold',
   src: path.join(process.cwd(), 'public/fonts/NotoSansSC-Bold.ttf'),
 })
@@ -45,7 +50,7 @@ const styles = StyleSheet.create({
     paddingRight: 40,
     paddingBottom: 28,
     paddingLeft: 40,
-    fontFamily: 'ResumeBody',
+    fontFamily: 'ResumeRegular',
     fontSize: 9.3,
     lineHeight: 1.5,
     color: '#444',
@@ -54,16 +59,16 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   name: {
-    fontSize: 18.5,
+    fontSize: 19.5,
     fontFamily: 'ResumeBold',
-    lineHeight: 1.2,
+    lineHeight: 1.25,
     color: '#202124',
   },
   nameRule: {
-    marginTop: 1.75,
+    marginTop: 3,
     marginBottom: 5,
     borderBottomWidth: 0.6,
-    borderBottomColor: '#e2e2e2',
+    borderBottomColor: '#e4e4e4',
   },
   headerSpacer: {
     height: 0,
@@ -87,23 +92,23 @@ const styles = StyleSheet.create({
   contactLink: {
     marginRight: 8,
     fontSize: 8.8,
-    color: '#2563eb',
+    color: '#1a56db',
     textDecoration: 'none',
   },
   section: {
     marginTop: 8,
   },
   sectionTitle: {
-    fontSize: 13.7,
+    fontSize: 13.5,
     fontFamily: 'ResumeBold',
     lineHeight: 1.2,
     color: '#202124',
   },
   sectionRule: {
-    marginTop: 1.75,
+    marginTop: 3,
     marginBottom: 5.5,
     borderBottomWidth: 0.6,
-    borderBottomColor: '#e1e1e1',
+    borderBottomColor: '#dcdcdc',
   },
   skillGroup: {
     flexDirection: 'row',
@@ -164,7 +169,7 @@ const styles = StyleSheet.create({
   projectLink: {
     marginRight: 5,
     fontSize: 8.8,
-    color: '#2563eb',
+    color: '#1a56db',
     textDecoration: 'none',
   },
   projectTech: {
@@ -202,7 +207,7 @@ const styles = StyleSheet.create({
   },
   openSourceLink: {
     fontSize: 8.8,
-    color: '#2563eb',
+    color: '#1a56db',
     textDecoration: 'none',
   },
   education: {
