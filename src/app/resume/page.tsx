@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { Download } from 'lucide-react'
 import { Fragment } from 'react'
-import resumeData from './resume-data'
+import resumeData, { parseInlineMarkdown } from './resume-data'
 
 export const metadata: Metadata = {
   title: 'Resume',
@@ -13,6 +13,18 @@ const paperClass = 'resume-paper relative min-h-screen bg-white px-5 py-6 dark:b
 const sectionTitleClass = 'border-b border-[#dcdcdc] pb-1 text-[17px] font-bold tracking-wide text-[#202124] sm:text-[18px]'
 const bodyTextClass = 'break-words text-[14px] leading-[1.65] text-[#555] sm:text-[13px]'
 const linkClass = 'break-all text-[#1a56db] no-underline transition-colors hover:text-[#1446b8] hover:underline sm:break-normal'
+
+function renderInlineText(text: string) {
+  return parseInlineMarkdown(text).map(part => (
+    part.strong
+      ? <strong key={`strong-${part.offset}`} className='font-semibold text-[#252525]'>{part.text}</strong>
+      : part.text
+  ))
+}
+
+function inlineTextKey(text: string) {
+  return parseInlineMarkdown(text).map(part => part.text).join('')
+}
 
 export default function ResumePage() {
   const { profile, skills, experiences, projects, openSource, education } = resumeData
@@ -101,7 +113,7 @@ export default function ResumePage() {
                   {group.category}
                   ：
                 </span>
-                <span className={bodyTextClass}>{group.items.join('、')}</span>
+                <span className={bodyTextClass}>{renderInlineText(group.items.join('、'))}</span>
               </div>
             ))}
           </div>
@@ -128,7 +140,7 @@ export default function ResumePage() {
                     {exp.end}
                   </span>
                 </div>
-                <p className={bodyTextClass}>{exp.description}</p>
+                <p className={bodyTextClass}>{renderInlineText(exp.description)}</p>
               </div>
             ))}
           </div>
@@ -142,7 +154,7 @@ export default function ResumePage() {
                 <div className='flex flex-wrap items-baseline gap-x-2 gap-y-1'>
                   <h3 className='text-[14px] font-bold text-[#202124] sm:text-[13px]'>{project.name}</h3>
                   {project.description && (
-                    <span className='text-[14px] text-[#333] sm:text-[13px]'>{project.description}</span>
+                    <span className='text-[14px] text-[#333] sm:text-[13px]'>{renderInlineText(project.description)}</span>
                   )}
                   {project.links?.map(link => (
                     <a
@@ -159,13 +171,13 @@ export default function ResumePage() {
                   ))}
                 </div>
                 {project.techStack && (
-                  <p className='break-words text-[13px] leading-snug text-[#777] sm:text-[12px]'>{project.techStack}</p>
+                  <p className='break-words text-[13px] leading-snug text-[#777] sm:text-[12px]'>{renderInlineText(project.techStack)}</p>
                 )}
                 {project.highlights && project.highlights.length > 0 && (
                   <ul className='space-y-1.5 pl-4'>
                     {project.highlights.map(highlight => (
-                      <li key={highlight} className={`${bodyTextClass} list-none before:mr-2 before:text-[#999] before:content-["•"]`}>
-                        {highlight}
+                      <li key={inlineTextKey(highlight)} className={`${bodyTextClass} list-none before:mr-2 before:text-[#999] before:content-["•"]`}>
+                        {renderInlineText(highlight)}
                       </li>
                     ))}
                   </ul>
@@ -179,8 +191,8 @@ export default function ResumePage() {
           <h2 className={sectionTitleClass}>开源经历</h2>
           <ul className='mt-3 space-y-2 pl-4'>
             {openSource.map(item => (
-              <li key={item.description} className={`${bodyTextClass} list-none before:mr-2 before:text-[#999] before:content-["•"]`}>
-                {item.description}
+              <li key={inlineTextKey(item.description)} className={`${bodyTextClass} list-none before:mr-2 before:text-[#999] before:content-["•"]`}>
+                {renderInlineText(item.description)}
                 {item.link && (
                   <>
                     {' '}

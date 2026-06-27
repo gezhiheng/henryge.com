@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import type { ReactElement } from 'react'
 import type { ResumeProject, ResumeProjectLink } from './resume-data'
 import path from 'node:path'
 import process from 'node:process'
@@ -12,7 +13,7 @@ import {
   Text,
   View,
 } from '@react-pdf/renderer'
-import resumeData from './resume-data'
+import resumeData, { parseInlineMarkdown } from './resume-data'
 
 Font.register({
   family: 'ResumeBody',
@@ -28,21 +29,6 @@ Font.register({
   family: 'ResumeBold',
   src: path.join(process.cwd(), 'public/fonts/NotoSansSC-Bold.ttf'),
 })
-
-const emphasizedTerms = [
-  '40%+',
-  '1分43秒',
-  '15秒',
-  '1 秒内',
-  '200+',
-  '6 个 npm 包',
-  '468 个面部关键点',
-]
-
-const emphasizedPattern = new RegExp(
-  `(${emphasizedTerms.map(term => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`,
-  'g',
-)
 
 const styles = StyleSheet.create({
   page: {
@@ -230,27 +216,12 @@ const styles = StyleSheet.create({
   },
 })
 
-function textWithHighlights(text: string) {
-  const nodes: Array<string | React.ReactElement> = []
-  let cursor = 0
-
-  for (const match of text.matchAll(emphasizedPattern)) {
-    const start = match.index ?? 0
-    const value = match[0]
-
-    if (start > cursor) {
-      nodes.push(text.slice(cursor, start))
-    }
-
-    nodes.push(<Text key={`${value}-${start}`} style={styles.strong}>{value}</Text>)
-    cursor = start + value.length
-  }
-
-  if (cursor < text.length) {
-    nodes.push(text.slice(cursor))
-  }
-
-  return nodes
+function textWithStrong(text: string) {
+  return parseInlineMarkdown(text).map<string | ReactElement>(part => (
+    part.strong
+      ? <Text key={`strong-${part.offset}`} style={styles.strong}>{part.text}</Text>
+      : part.text
+  ))
 }
 
 function linkLabel(link: ResumeProjectLink) {
@@ -314,7 +285,7 @@ function ResumeDocument() {
                 {group.category}
                 ：
               </Text>
-              <Text style={styles.skillItems}>{group.items.join('、')}</Text>
+              <Text style={styles.skillItems}>{textWithStrong(group.items.join('、'))}</Text>
             </View>
           ))}
         </View>
@@ -332,7 +303,7 @@ function ResumeDocument() {
                   {`${exp.start} ~ ${exp.end}`}
                 </Text>
               </View>
-              <Text style={styles.experienceDesc}>{textWithHighlights(exp.description)}</Text>
+              <Text style={styles.experienceDesc}>{textWithStrong(exp.description)}</Text>
             </View>
           ))}
         </View>
@@ -345,7 +316,7 @@ function ResumeDocument() {
               <View style={styles.projectNameRow}>
                 <Text style={styles.projectName}>{project.name}</Text>
                 {project.description && (
-                  <Text style={styles.projectInlineDesc}>{project.description}</Text>
+                  <Text style={styles.projectInlineDesc}>{textWithStrong(project.description)}</Text>
                 )}
                 {project.links?.map(projLink => (
                   <Link key={projLink.url} src={projLink.url} style={styles.projectLink}>
@@ -354,12 +325,12 @@ function ResumeDocument() {
                 ))}
               </View>
               {project.techStack && (
-                <Text style={styles.projectTech}>{project.techStack}</Text>
+                <Text style={styles.projectTech}>{textWithStrong(project.techStack)}</Text>
               )}
               {visibleHighlights(project).map(highlight => (
                 <View key={highlight} style={styles.highlight}>
                   <Text style={styles.bullet}>•</Text>
-                  <Text style={styles.highlightText}>{textWithHighlights(highlight)}</Text>
+                  <Text style={styles.highlightText}>{textWithStrong(highlight)}</Text>
                 </View>
               ))}
             </View>
@@ -373,7 +344,7 @@ function ResumeDocument() {
             <View key={item.description} style={styles.openSourceItem}>
               <Text style={styles.bullet}>•</Text>
               <Text style={styles.openSourceText}>
-                {textWithHighlights(item.description)}
+                {textWithStrong(item.description)}
                 {item.link && (
                   <Link src={item.link} style={styles.openSourceLink}>
                     {` | ${linkLabel({ url: item.link })}`}
@@ -389,9 +360,9 @@ function ResumeDocument() {
           <View style={styles.sectionRule} />
           {education.map(edu => (
             <View key={edu.school} style={styles.education}>
-              <Text style={styles.educationText}>{edu.degree}</Text>
-              <Text style={styles.educationSchool}>{edu.school}</Text>
-              <Text style={styles.educationText}>{edu.major}</Text>
+              <Text style={styles.educationText}>{textWithStrong(edu.degree)}</Text>
+              <Text style={styles.educationSchool}>{textWithStrong(edu.school)}</Text>
+              <Text style={styles.educationText}>{textWithStrong(edu.major)}</Text>
               <Text style={styles.educationText}>
                 {`${edu.start} ~ ${edu.end}`}
               </Text>

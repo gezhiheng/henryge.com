@@ -60,6 +60,12 @@ export interface ResumeData {
   education: ResumeEducation[]
 }
 
+export interface ResumeInlinePart {
+  text: string
+  strong: boolean
+  offset: number
+}
+
 interface MarkdownBlock {
   title: string
   body: string
@@ -173,6 +179,30 @@ function parseLinks(value: string) {
 
 function normalizeText(markdown: string) {
   return lines(markdown).join(' ')
+}
+
+export function parseInlineMarkdown(text: string): ResumeInlinePart[] {
+  const parts: ResumeInlinePart[] = []
+  const strongPattern = /\*\*([^*]+)\*\*/g
+  let cursor = 0
+
+  for (const match of text.matchAll(strongPattern)) {
+    const start = match.index ?? 0
+    const value = match[1] ?? ''
+
+    if (start > cursor) {
+      parts.push({ text: text.slice(cursor, start), strong: false, offset: cursor })
+    }
+
+    parts.push({ text: value, strong: true, offset: start })
+    cursor = start + match[0].length
+  }
+
+  if (cursor < text.length) {
+    parts.push({ text: text.slice(cursor), strong: false, offset: cursor })
+  }
+
+  return parts.length > 0 ? parts : [{ text, strong: false, offset: 0 }]
 }
 
 function parseSkills(markdown: string): ResumeSkillGroup[] {
