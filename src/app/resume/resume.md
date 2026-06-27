@@ -64,6 +64,8 @@ JSON 驱动演示文稿平台
 - 构建训练记录回放组件，使用 ECharts 展示射击轨迹并支持轨迹回放
 - 通过 IndexedDB 做本地离线缓存，结合 Express + MongoDB 实现多端数据同步
 
+<!-- pdf-page-break -->
+
 ### HDriveGUI
 
 基于 Vue 3 的可视化上位机软件

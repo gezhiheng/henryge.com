@@ -31,6 +31,7 @@ export interface ResumeProject {
   links?: ResumeProjectLink[]
   techStack?: string
   highlights?: string[]
+  pageBreakBefore?: boolean
 }
 
 export interface ResumeOpenSourceItem {
@@ -69,9 +70,11 @@ export interface ResumeInlinePart {
 interface MarkdownBlock {
   title: string
   body: string
+  pageBreakBefore: boolean
 }
 
 const resumeMarkdownPath = path.join(process.cwd(), 'src', 'app', 'resume', 'resume.md')
+const pdfPageBreakMarker = '<!-- pdf-page-break -->'
 
 function field(data: Record<string, unknown>, key: string) {
   const value = data[key]
@@ -116,10 +119,21 @@ function requiredSection(sections: Map<string, string[]>, title: string) {
 function splitBlocks(markdown: string) {
   const blocks: MarkdownBlock[] = []
   let current: MarkdownBlock | null = null
+  let pageBreakBeforeNextBlock = false
 
   for (const line of markdown.split(/\r?\n/)) {
+    if (line.trim() === pdfPageBreakMarker) {
+      pageBreakBeforeNextBlock = true
+      continue
+    }
+
     if (line.startsWith('### ')) {
-      current = { title: line.slice(4).trim(), body: '' }
+      current = {
+        title: line.slice(4).trim(),
+        body: '',
+        pageBreakBefore: pageBreakBeforeNextBlock,
+      }
+      pageBreakBeforeNextBlock = false
       blocks.push(current)
       continue
     }
@@ -267,6 +281,7 @@ function parseProjects(markdown: string): ResumeProject[] {
       links,
       techStack,
       highlights,
+      pageBreakBefore: block.pageBreakBefore,
     }
   })
 }

@@ -309,7 +309,7 @@ function ResumeDocument() {
           <Text style={styles.sectionTitle}>项目经历</Text>
           <View style={styles.sectionRule} />
           {projects.map(project => (
-            <View key={project.name} style={styles.project}>
+            <View key={project.name} style={styles.project} break={project.pageBreakBefore}>
               <View style={styles.projectNameRow}>
                 <Text style={styles.projectName}>{project.name}</Text>
                 {project.description && (
