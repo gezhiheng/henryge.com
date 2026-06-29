@@ -1,5 +1,5 @@
-// Dev-only tool: regenerates subsetted Noto Sans SC fonts from src/app/resume/resume.md.
-// Run manually with `pnpm build:fonts` after updating the resume markdown.
+// Dev-only tool: regenerates subsetted Noto Sans SC fonts from resume markdown files.
+// Run manually with `pnpm build:fonts` after updating resume markdown.
 // Requires Python fonttools (pip install fonttools) and curl.
 // The output files in public/fonts/ are committed to git — no Python needed at build time.
 import { execSync } from 'node:child_process'
@@ -14,6 +14,7 @@ const bodyFull = path.join(projectRoot, '.next', 'cache', 'NotoSansSC-Body-full.
 const regularFull = path.join(projectRoot, '.next', 'cache', 'NotoSansSC-Regular-full.ttf')
 const boldFull = path.join(projectRoot, '.next', 'cache', 'NotoSansSC-Bold-full.ttf')
 const dataSource = path.join(projectRoot, 'src', 'app', 'resume', 'resume.md')
+const versionsDir = path.join(projectRoot, 'src', 'app', 'resume', 'versions')
 const pdfSource = path.join(projectRoot, 'src', 'app', 'resume', 'resume-pdf.tsx')
 const combinedTextPath = path.join(projectRoot, '.next', 'cache', 'resume-font-text.txt')
 
@@ -40,13 +41,23 @@ function instanceAndSubset(input, output, textFile) {
   execSync(`pyftsubset "${input}" --text-file="${textFile}" --layout-features='*' --no-hinting --desubroutinize --output-file="${output}"`, { stdio: 'inherit' })
 }
 
+async function readResumeMarkdownText() {
+  const versionFiles = await fs.readdir(versionsDir).catch(() => [])
+  const texts = [await fs.readFile(dataSource, 'utf8')]
+
+  for (const file of versionFiles.filter(file => file.endsWith('.md')).sort()) {
+    texts.push(await fs.readFile(path.join(versionsDir, file), 'utf8'))
+  }
+
+  return texts.join('\n')
+}
+
 async function buildFonts() {
   await downloadVf()
   await ensureDir(path.join(fontsDir, 'public'))
 
-  // Combine all source files that contain text rendered into the PDF
-  // (resume.md for content, resume-pdf.tsx for section titles/labels)
-  const dataText = await fs.readFile(dataSource, 'utf8')
+  // Combine all source files that contain text rendered into the PDF.
+  const dataText = await readResumeMarkdownText()
   const pdfText = await fs.readFile(pdfSource, 'utf8')
   await ensureDir(combinedTextPath)
   await fs.writeFile(combinedTextPath, dataText + pdfText, 'utf8')

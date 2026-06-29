@@ -85,7 +85,7 @@ export default function SiteHeader() {
   }, [])
 
   const pathname = usePathname()
-  const isResume = pathname === '/resume'
+  const isResume = pathname === '/resume' || pathname.startsWith('/resume/')
 
   if (isResume) {
     return null

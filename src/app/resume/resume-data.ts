@@ -74,6 +74,7 @@ interface MarkdownBlock {
 }
 
 const resumeMarkdownPath = path.join(process.cwd(), 'src', 'app', 'resume', 'resume.md')
+const resumeVersionsDir = path.join(process.cwd(), 'src', 'app', 'resume', 'versions')
 const pdfPageBreakMarker = '<!-- pdf-page-break -->'
 
 function field(data: Record<string, unknown>, key: string) {
@@ -312,8 +313,30 @@ function parseEducation(markdown: string): ResumeEducation[] {
   })
 }
 
-function readResumeData(): ResumeData {
-  const file = fs.readFileSync(resumeMarkdownPath, 'utf8')
+function resumePath(version = 'default') {
+  if (version === 'default') {
+    return resumeMarkdownPath
+  }
+
+  if (!/^[\p{L}\p{N}._-]+$/u.test(version)) {
+    return null
+  }
+
+  return path.join(resumeVersionsDir, `${version}.md`)
+}
+
+export function hasResumeVersion(version = 'default') {
+  const filePath = resumePath(version)
+  return filePath ? fs.existsSync(filePath) : false
+}
+
+export function getResumeData(version = 'default'): ResumeData {
+  const filePath = resumePath(version)
+  if (!filePath || !fs.existsSync(filePath)) {
+    throw new Error(`Missing resume version: ${version}`)
+  }
+
+  const file = fs.readFileSync(filePath, 'utf8')
   const { data, content } = matter(file)
   const frontmatter = data as Record<string, unknown>
   const sections = splitSections(content)
@@ -334,7 +357,3 @@ function readResumeData(): ResumeData {
     education: parseEducation(requiredSection(sections, '教育经历')),
   }
 }
-
-const resumeData = readResumeData()
-
-export default resumeData

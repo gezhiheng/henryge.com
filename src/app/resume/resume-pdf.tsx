@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import type { ReactElement } from 'react'
-import type { ResumeProject, ResumeProjectLink } from './resume-data'
+import type { ResumeData, ResumeProject, ResumeProjectLink } from './resume-data'
 import path from 'node:path'
 import process from 'node:process'
 import {
@@ -13,7 +13,7 @@ import {
   Text,
   View,
 } from '@react-pdf/renderer'
-import resumeData, { parseInlineMarkdown } from './resume-data'
+import { getResumeData, parseInlineMarkdown } from './resume-data'
 
 Font.register({
   family: 'ResumeBody',
@@ -244,7 +244,7 @@ function visibleHighlights(project: ResumeProject) {
   return project.highlights ?? []
 }
 
-function ResumeDocument() {
+function ResumeDocument({ resumeData }: { resumeData: ResumeData }) {
   const { profile, skills, experiences, projects, openSource, education } = resumeData
 
   return (
@@ -371,6 +371,6 @@ function ResumeDocument() {
   )
 }
 
-export async function renderResumePDF() {
-  return renderToBuffer(<ResumeDocument />)
+export async function renderResumePDF(resumeData = getResumeData()) {
+  return renderToBuffer(<ResumeDocument resumeData={resumeData} />)
 }
