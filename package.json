@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && node scripts/ensure-og-runtime.mjs && node scripts/ensure-resume-fonts.mjs",
+    "deploy": "./scripts/deploy-local.sh",
     "build:fonts": "node scripts/build-resume-fonts.mjs",
     "start": "next start",
     "lint": "eslint",

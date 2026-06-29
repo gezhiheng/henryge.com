@@ -12,15 +12,19 @@ PORT="${PORT:-3000}"
 SMOKE_PORT="${SMOKE_PORT:-3001}"
 KEEP_RELEASES="${KEEP_RELEASES:-5}"
 ALLOW_DIRTY="${ALLOW_DIRTY:-0}"
+BUILD_SOURCE="${BUILD_SOURCE:-local}"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 COMMIT="$(git -C "$ROOT_DIR" rev-parse --short=12 HEAD)"
-BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/henryge-build.XXXXXX")"
+BUILD_DIR=""
 RELEASE_DIR="$(mktemp -d "${TMPDIR:-/tmp}/henryge-release.XXXXXX")"
 ARCHIVE="${TMPDIR:-/tmp}/henryge-release-${COMMIT}.tar.gz"
 
 cleanup() {
-  rm -rf "$BUILD_DIR" "$RELEASE_DIR"
+  if [ -n "$BUILD_DIR" ]; then
+    rm -rf "$BUILD_DIR"
+  fi
+  rm -rf "$RELEASE_DIR"
 }
 trap cleanup EXIT
 
@@ -35,33 +39,56 @@ require_cmd() {
   fi
 }
 
-if [ "$ALLOW_DIRTY" != "1" ] && [ -n "$(git -C "$ROOT_DIR" status --porcelain)" ]; then
-  echo "Working tree is not clean. Commit/stash changes or rerun with ALLOW_DIRTY=1." >&2
-  git -C "$ROOT_DIR" status --short >&2
-  exit 1
-fi
+require_local_build() {
+  if [ ! -d "$ROOT_DIR/.next/standalone" ] || [ ! -d "$ROOT_DIR/.next/static" ]; then
+    echo "Missing local build output. Run pnpm build first, or set BUILD_SOURCE=clean." >&2
+    exit 1
+  fi
+}
 
 require_cmd git
-require_cmd pnpm
 require_cmd tar
 require_cmd ssh
 require_cmd scp
 
-log "Create clean build copy"
-git -C "$ROOT_DIR" archive --format=tar HEAD | tar -C "$BUILD_DIR" -xf -
+case "$BUILD_SOURCE" in
+  local)
+    log "Use local build output"
+    require_local_build
+    SOURCE_DIR="$ROOT_DIR"
+    ;;
+  clean)
+    if [ "$ALLOW_DIRTY" != "1" ] && [ -n "$(git -C "$ROOT_DIR" status --porcelain)" ]; then
+      echo "Working tree is not clean. Commit/stash changes or rerun with ALLOW_DIRTY=1." >&2
+      git -C "$ROOT_DIR" status --short >&2
+      exit 1
+    fi
 
-log "Install dependencies"
-pnpm --dir "$BUILD_DIR" install --frozen-lockfile --prefer-offline
+    require_cmd pnpm
+    BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/henryge-build.XXXXXX")"
 
-log "Build Next.js standalone"
-pnpm --dir "$BUILD_DIR" build
+    log "Create clean build copy"
+    git -C "$ROOT_DIR" archive --format=tar HEAD | tar -C "$BUILD_DIR" -xf -
+
+    log "Install dependencies"
+    pnpm --dir "$BUILD_DIR" install --frozen-lockfile --prefer-offline
+
+    log "Build Next.js standalone"
+    pnpm --dir "$BUILD_DIR" build
+    SOURCE_DIR="$BUILD_DIR"
+    ;;
+  *)
+    echo "Unsupported BUILD_SOURCE: $BUILD_SOURCE (use local or clean)." >&2
+    exit 1
+    ;;
+esac
 
 log "Package release ${COMMIT}"
 rm -f "$ARCHIVE"
 mkdir -p "$RELEASE_DIR/.next"
-cp -a "$BUILD_DIR/.next/standalone/." "$RELEASE_DIR/"
-cp -a "$BUILD_DIR/.next/static" "$RELEASE_DIR/.next/static"
-cp -a "$BUILD_DIR/public" "$RELEASE_DIR/public"
+cp -a "$SOURCE_DIR/.next/standalone/." "$RELEASE_DIR/"
+cp -a "$SOURCE_DIR/.next/static" "$RELEASE_DIR/.next/static"
+cp -a "$SOURCE_DIR/public" "$RELEASE_DIR/public"
 printf '%s\n' "$COMMIT" > "$RELEASE_DIR/REVISION"
 
 COPYFILE_DISABLE=1 tar \
@@ -169,8 +196,9 @@ if ! wait_for_http "http://127.0.0.1:$PORT" 30; then
   exit 1
 fi
 
-echo "== Verify nginx route =="
+echo "== Verify nginx routes =="
 curl -fsS -I -H 'Host: henryge.com' http://127.0.0.1 | sed -n '1,12p'
+curl -kfsS -I --resolve henryge.com:443:127.0.0.1 https://henryge.com | sed -n '1,12p'
 
 echo "== Clean old releases =="
 find "$RELEASES_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%T@ %p\n' \
@@ -185,4 +213,3 @@ ss -tulpn | awk 'NR==1 || /:(3000|80|443)[[:space:]]/'
 REMOTE_SCRIPT
 
 log "Done"
-curl -I --connect-timeout 10 --max-time 20 "https://henryge.com"

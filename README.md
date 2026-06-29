@@ -117,7 +117,7 @@ Deploy steps (high level):
 Build the Next.js standalone release locally, upload it to the server, and switch the remote `systemd` service:
 
 ```bash
-./scripts/deploy-local.sh
+pnpm run deploy
 ```
 
-The script deploys the current Git `HEAD` only. Commit or stash local changes first, or set `ALLOW_DIRTY=1` if you explicitly want to deploy while the working tree is dirty.
+`scripts/deploy-local.sh` uploads the existing local build output by default. Use `BUILD_SOURCE=clean ./scripts/deploy-local.sh` to keep the old clean `HEAD` build flow.
