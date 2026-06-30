@@ -1,4 +1,4 @@
-import { getResumeData, hasResumeVersion } from '../../resume-data'
+import { getResumeData, hasResumeVersion, resumePdfContentDisposition } from '../../resume-data'
 import { renderResumePDF } from '../../resume-pdf'
 
 export const runtime = 'nodejs'
@@ -16,12 +16,13 @@ export async function GET(_request: Request, { params }: ResumeVersionPdfRouteCo
   }
 
   try {
-    const buffer = await renderResumePDF(getResumeData(version))
+    const resumeData = getResumeData(version)
+    const buffer = await renderResumePDF(resumeData)
 
     return new Response(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename="resume.pdf"',
+        'Content-Disposition': resumePdfContentDisposition(resumeData),
         'Cache-Control': 'public, max-age=3600',
       },
     })

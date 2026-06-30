@@ -220,6 +220,22 @@ export function parseInlineMarkdown(text: string): ResumeInlinePart[] {
   return parts.length > 0 ? parts : [{ text, strong: false, offset: 0 }]
 }
 
+function fileNamePart(value: string | undefined) {
+  return value
+    ? Array.from(value).filter(char => char.charCodeAt(0) >= 32 && !'<>:"/\\|?*'.includes(char)).join('').trim()
+    : undefined
+}
+
+export function resumePdfContentDisposition(resumeData: ResumeData) {
+  const filename = [
+    resumeData.profile.name,
+    resumeData.profile.title,
+    resumeData.profile.phone,
+  ].map(fileNamePart).filter(Boolean).join('-') || 'resume'
+
+  return `attachment; filename="resume.pdf"; filename*=UTF-8''${encodeURIComponent(`${filename}.pdf`)}`
+}
+
 function parseSkills(markdown: string): ResumeSkillGroup[] {
   return lines(markdown).map((line) => {
     const [category, rawItems] = splitOnce(stripListMarker(line), /[:：]/)

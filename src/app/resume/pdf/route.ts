@@ -1,3 +1,4 @@
+import { getResumeData, resumePdfContentDisposition } from '../resume-data'
 import { renderResumePDF } from '../resume-pdf'
 
 export const runtime = 'nodejs'
@@ -5,12 +6,13 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    const buffer = await renderResumePDF()
+    const resumeData = getResumeData()
+    const buffer = await renderResumePDF(resumeData)
 
     return new Response(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename="resume.pdf"',
+        'Content-Disposition': resumePdfContentDisposition(resumeData),
         'Cache-Control': 'public, max-age=3600',
       },
     })
