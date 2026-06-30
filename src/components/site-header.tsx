@@ -109,7 +109,7 @@ export default function SiteHeader() {
 
   const headerClass = `sticky top-0 z-20 transition-colors duration-300 ${
     isScrolled
-      ? 'border-b border-border/60 bg-background/70 backdrop-blur'
+      ? 'border-b border-border/60 bg-background'
       : 'border-b border-transparent bg-transparent'
   }`
 
