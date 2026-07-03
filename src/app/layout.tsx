@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono, Merriweather } from 'next/font/google'
 import DotsBackground from '@/components/dots-background'
+import PageEnterSession from '@/components/page-enter-session'
 import SiteFooter from '@/components/site-footer'
 import SiteHeader from '@/components/site-header'
 import { siteConfig } from '@/lib/site'
@@ -54,6 +55,13 @@ export default function RootLayout({
   const theme = storedTheme === "dark" || (!storedTheme && prefersDark) ? "dark" : "light";
   document.documentElement.classList.toggle("dark", theme === "dark");
   document.documentElement.style.colorScheme = theme;
+  try {
+    const pageEnterKey = "page-enter:" + window.location.pathname;
+    const isFirstVisit = sessionStorage.getItem(pageEnterKey) !== "1";
+    document.documentElement.dataset.pageEnter = isFirstVisit ? "new" : "seen";
+  } catch {
+    document.documentElement.dataset.pageEnter = "seen";
+  }
 })();`,
           }}
         />
@@ -63,6 +71,7 @@ export default function RootLayout({
       >
         <div className="flex min-h-screen flex-col">
           <DotsBackground />
+          <PageEnterSession />
           <SiteHeader />
           <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 pt-10">
             {children}

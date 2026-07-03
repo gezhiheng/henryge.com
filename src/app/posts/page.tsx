@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getAllPosts } from '@/lib/posts'
-import { cn } from '@/lib/utils'
+import { cn, enterStage } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: 'Posts',
@@ -24,8 +24,8 @@ export default function PostsPage () {
   const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a))
 
   return (
-    <div className='space-y-12 min-h-screen max-w-2xl mx-auto'>
-      <div className='space-y-3' id='archive'>
+    <div className='space-y-12 min-h-screen max-w-2xl mx-auto overflow-y-clip'>
+      <div className='page-enter space-y-3' id='archive' style={enterStage(1)}>
         <h1 className='text-3xl font-semibold md:text-4xl'>Posts</h1>
         <p className='text-base text-muted-foreground'>
           Where i share thoughts, life, and more.
@@ -33,11 +33,12 @@ export default function PostsPage () {
       </div>
 
       <div className='space-y-12 md:space-y-18'>
-        {years.map(year => (
+        {years.map((year, index) => (
           <section
             key={year}
+            style={enterStage(index + 2)}
             className={cn(
-              'relative pt-4 md:pt-6',
+              'page-enter relative pt-4 md:pt-6',
               postsByYear[year].length === 1 && 'pb-0 md:pb-8'
             )}
           >

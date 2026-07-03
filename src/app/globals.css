@@ -135,6 +135,26 @@
   }
 }
 
+@keyframes page-slide-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-page-enter="new"] .page-enter {
+    --enter-stage: 0;
+    animation: 1200ms both page-slide-enter;
+    animation-delay: calc(var(--enter-stage) * 100ms);
+    will-change: opacity, transform;
+  }
+}
+
 @layer components {
   .prose {
     @apply text-[1.05rem] leading-[1.9] text-foreground;

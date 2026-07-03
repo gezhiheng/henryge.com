@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import { enterStage } from '@/lib/utils'
 import projects, { tagStyles } from './projects-array'
 
 interface Project {
@@ -26,8 +27,8 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage () {
   return (
-    <div className='space-y-12 min-h-screen max-w-2xl mx-auto'>
-      <div className='space-y-3' id='archive'>
+    <div className='space-y-12 min-h-screen max-w-2xl mx-auto overflow-y-clip'>
+      <div className='page-enter space-y-3' id='archive' style={enterStage(1)}>
         <h1 className='text-3xl font-semibold md:text-4xl'>Projects</h1>
         <p className='text-base text-muted-foreground'>
           A collection of projects I&apos;m working on and have worked on.
@@ -35,13 +36,14 @@ export default function ProjectsPage () {
       </div>
 
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-        {projects.map((project: Project) => (
+        {projects.map((project: Project, index) => (
           <Link
             key={project.title}
             href={project.href}
             target='_blank'
             rel='noopener noreferrer'
-            className='group'
+            className='page-enter group'
+            style={enterStage(index + 2)}
           >
             <Card className='flex h-full flex-col overflow-hidden border-border/60 bg-card/60 transition-shadow hover:shadow-md'>
               {project.img && (
