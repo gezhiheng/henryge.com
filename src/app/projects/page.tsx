@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage () {
   return (
-    <div className='space-y-12 min-h-screen max-w-2xl mx-auto overflow-y-clip'>
+    <div className='space-y-12 min-h-screen max-w-2xl mx-auto'>
       <div className='page-enter space-y-3' id='archive' style={enterStage(1)}>
         <h1 className='text-3xl font-semibold md:text-4xl'>Projects</h1>
         <p className='text-base text-muted-foreground'>
