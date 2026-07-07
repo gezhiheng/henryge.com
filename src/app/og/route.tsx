@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { getAllPosts } from '@/lib/posts'
+import { getRecentPosts } from '@/lib/posts'
 import { siteConfig } from '@/lib/site'
 import {
   createSocialCardImage,
@@ -12,7 +12,7 @@ export const contentType = SOCIAL_CARD_CONTENT_TYPE
 export const size = SOCIAL_CARD_SIZE
 
 export async function GET() {
-  const latestPosts = getAllPosts().slice(0, 3)
+  const latestPosts = getRecentPosts()
 
   return createSocialCardImage({
     variant: 'home',

@@ -1,12 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Separator } from '@/components/ui/separator'
+import { getRecentPosts } from '@/lib/posts'
 import { enterStage } from '@/lib/utils'
-import { getAllPosts } from '../lib/posts'
 
 export default function Home() {
-  const posts = getAllPosts()
-  const latestPosts = posts.slice(0, 3)
+  const recentPosts = getRecentPosts()
 
   return (
     <div className="mx-auto max-w-2xl overflow-y-clip">
@@ -84,7 +83,7 @@ export default function Home() {
             </Link>
           </div>
           <div className="space-y-6">
-            {latestPosts.map((post, index) => (
+            {recentPosts.map((post, index) => (
               <article
                 key={post.slug}
                 className="page-enter space-y-1"

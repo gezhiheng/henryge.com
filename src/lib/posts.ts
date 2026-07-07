@@ -35,6 +35,8 @@ export type Post = PostMeta & {
 const postsDirectory = path.join(process.cwd(), 'content')
 const publicDirectory = path.join(process.cwd(), 'public')
 const siteOrigin = new URL(siteConfig.url).origin
+const recentPostsLookbackMonths = 6
+const recentPostsMinimumCount = 3
 
 interface RehypePoint {
   line: number
@@ -97,6 +99,28 @@ function getPostFilePaths() {
 
 function getSlugFromFileName(fileName: string) {
   return fileName.replace(/\.md$/, '')
+}
+
+function getDateMonthsAgo(referenceDate: Date, months: number) {
+  const cutoffDate = new Date(
+    referenceDate.getFullYear(),
+    referenceDate.getMonth(),
+    referenceDate.getDate(),
+  )
+  const targetDate = cutoffDate.getDate()
+
+  cutoffDate.setDate(1)
+  cutoffDate.setMonth(cutoffDate.getMonth() - months)
+
+  const lastDateInTargetMonth = new Date(
+    cutoffDate.getFullYear(),
+    cutoffDate.getMonth() + 1,
+    0,
+  ).getDate()
+
+  cutoffDate.setDate(Math.min(targetDate, lastDateInTargetMonth))
+
+  return cutoffDate
 }
 
 function versionPublicAssetSrc(src: string) {
@@ -318,6 +342,22 @@ export function getAllPosts(): PostMeta[] {
   return posts.sort((a, b) => {
     return new Date(b.date).getTime() - new Date(a.date).getTime()
   })
+}
+
+export function getRecentPosts(
+  posts = getAllPosts(),
+  referenceDate = new Date(),
+): PostMeta[] {
+  const cutoffDate = getDateMonthsAgo(referenceDate, recentPostsLookbackMonths)
+  const postsInRecentMonths = posts.filter((post) => {
+    return new Date(post.date).getTime() >= cutoffDate.getTime()
+  })
+
+  if (postsInRecentMonths.length >= recentPostsMinimumCount) {
+    return postsInRecentMonths
+  }
+
+  return posts.slice(0, recentPostsMinimumCount)
 }
 
 export function getPostBySlug(slug: string): Post | null {
