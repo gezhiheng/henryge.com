@@ -55,7 +55,7 @@ export default function Home() {
             className="page-enter text-base leading-7 text-muted-foreground md:text-lg md:leading-8"
             style={enterStage(6)}
           >
-            <span>代码之外和工作之余，我喜欢打游戏、追番、阅读、打篮球、看球赛和弹尤克里里。另外我还是斯蒂芬库里和金州勇士的忠实球迷，Let&apos;s go Warriors!</span>
+            <span>代码之外和工作之余，我喜欢打游戏、追番、阅读、打篮球、看球赛和弹尤克里里。另外我还是斯蒂芬库里和金州勇士的忠实球迷，Let&apos;s go Warriors！</span>
           </p>
           <p
             className="page-enter text-base leading-7 text-muted-foreground md:text-lg md:leading-8"
