@@ -61,7 +61,7 @@ export default function Home() {
             className="page-enter text-base leading-7 text-muted-foreground md:text-lg md:leading-8"
             style={enterStage(7)}
           >
-            <span>目前在不断探索与尝试，希望找到一个真正热爱的方向，长期投入，同时也保留对生活本身的感受与享受。</span>
+            <span>目前在不断探索与尝试，并保持 Work life balance。</span>
           </p>
         </section>
 
