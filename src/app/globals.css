@@ -121,6 +121,12 @@
   body {
     overflow-x: clip;
   }
+  /* Large external displays only — 13" MBA stays at default (~1280–1680 CSS px). */
+  @media (min-width: 1800px) {
+    html {
+      font-size: 110%;
+    }
+  }
   * {
     @apply border-border outline-ring/50;
   }
