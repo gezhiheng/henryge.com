@@ -177,6 +177,9 @@
   .prose p {
     @apply mt-5 text-muted-foreground;
   }
+  .prose .post-small-note {
+      @apply align-baseline text-[0.8em] leading-none text-muted-foreground/60;
+  }
   .prose a {
     @apply text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground;
   }

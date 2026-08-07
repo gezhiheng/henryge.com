@@ -277,6 +277,61 @@ function rehypeExternalLinks() {
   }
 }
 
+function rehypeSmallNotes() {
+  const smallNotePattern = /\{\{small:([^{}]+)\}\}/g
+
+  return (tree: RehypeRoot) => {
+    visit(tree, 'text', (node, index, parent) => {
+      if (typeof index !== 'number' || !parent || !smallNotePattern.test(node.value)) {
+        smallNotePattern.lastIndex = 0
+        return
+      }
+
+      smallNotePattern.lastIndex = 0
+
+      const children: RehypeContent[] = []
+      let lastIndex = 0
+
+      for (const match of node.value.matchAll(smallNotePattern)) {
+        const matchIndex = match.index ?? 0
+        const [raw, note] = match
+
+        if (matchIndex > lastIndex) {
+          children.push({
+            type: 'text',
+            value: node.value.slice(lastIndex, matchIndex),
+          })
+        }
+
+        children.push({
+          type: 'element',
+          tagName: 'span',
+          properties: {
+            className: ['post-small-note'],
+          },
+          children: [
+            {
+              type: 'text',
+              value: note,
+            },
+          ],
+        })
+
+        lastIndex = matchIndex + raw.length
+      }
+
+      if (lastIndex < node.value.length) {
+        children.push({
+          type: 'text',
+          value: node.value.slice(lastIndex),
+        })
+      }
+
+      parent.children.splice(index, 1, ...children)
+    })
+  }
+}
+
 function rehypeHorizontalGallery() {
   return (tree: RehypeRoot) => {
     visit(tree, 'element', (node, index, parent) => {
@@ -384,6 +439,7 @@ export function getPostBySlug(slug: string): Post | null {
     })
     .use(rehypeImageDefaults)
     .use(rehypeExternalLinks)
+    .use(rehypeSmallNotes)
     .use(rehypeHorizontalGallery)
     .use(rehypeStringify)
     .processSync(content)
