@@ -1,123 +1,95 @@
-Henry's blog built with Next.js App Router, Markdown content, and Tailwind CSS.
+# Henry Ge
 
-## Requirements
+这是 Henry Ge 的个人博客。
 
-- Node.js 20+
-- pnpm 10.33.2 via Corepack
+目前是一名全栈开发工程师，早期从事 Java 后端开发，后来转向前端，也参与过开源项目和独立项目的开发。这个博客主要用来整理技术笔记、分享开发经验，也记录读书、游戏、旅行、球鞋和日常生活中的想法。
 
-## Local development
+## 内容方向
 
-Install dependencies and start the dev server:
+- JavaScript、TypeScript、Rust 等技术笔记
+- AI Coding 与软件开发工作流
+- 项目实践和工程经验
+- 读书、游戏、旅行和生活记录
+- 关于技术、工作与个人成长的思考
+
+## 站点
+
+- [博客首页](https://henryge.com)
+- [文章归档](https://henryge.com/posts)
+- [项目展示](https://henryge.com/projects)
+- [GitHub](https://github.com/gezhiheng)
+- [X](https://x.com/h3nryge)
+
+## 页面
+
+- 首页：个人介绍和最近文章
+- Posts：全部博客文章
+- Projects：个人项目和开源项目
+- Resume：个人简历
+
+## 技术栈
+
+- Next.js App Router
+- React
+- TypeScript
+- Tailwind CSS
+- Markdown
+
+文章内容保存在 `content/` 目录中，由 `src/lib/posts.ts` 解析并在构建时渲染。
+
+## 本地开发
+
+项目需要 Node.js 20+ 和 pnpm 10.33.2。
 
 ```bash
+pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+打开 [http://localhost:3000](http://localhost:3000) 查看博客。
 
-## Scripts
-
-```bash
-pnpm dev    # start dev server
-pnpm build  # build for production
-pnpm start  # start production server
-pnpm lint   # run ESLint
-```
-
-## Content workflow
-
-- Add posts as Markdown files in `content/`.
-- Post rendering is handled by `src/lib/posts.ts`.
-- Shared formatting utilities live in `src/lib/`.
-
-## Project structure
-
-- `src/app/` Next.js routes, layouts, and route handlers
-- `src/components/` shared UI and layout components
-- `src/lib/` content helpers and formatting
-- `content/` Markdown posts
-- `public/` static assets
-
-## Docker
-
-Build and run locally:
+## 常用命令
 
 ```bash
-docker build -t henrys-blog-next .
-docker run --rm -p 3000:3000 henrys-blog-next
+pnpm dev      # 启动开发服务器
+pnpm lint     # 运行 ESLint
+pnpm build    # 构建生产版本
+pnpm start    # 启动生产服务
+pnpm deploy   # 本地构建并上传部署
 ```
 
-## Production deployment (Docker + Nginx)
+## 项目结构
 
-This project is deployed with Docker and optionally reverse-proxied by Nginx.
+- `src/app/`：Next.js routes、layouts 和 route handlers
+- `src/components/`：站点布局和共享 UI components
+- `src/lib/`：文章解析、格式化和站点配置
+- `content/`：Markdown 文章内容
+- `public/`：图片、字体、favicon 等静态资源
+- `scripts/`：构建和部署辅助脚本
 
-1) Build and push images via GitHub Actions (see CI/CD below).
-2) Server pulls `ghcr.io/<owner>/<repo>:latest`.
-3) Container runs on port 3000.
-4) Nginx proxies `henryge.com` to `127.0.0.1:3000`.
+## 部署
 
-Example Nginx server block:
+生产环境以 Docker 方式运行在 3000 端口，可通过 Nginx reverse proxy 到 `henryge.com`。
 
-```nginx
-server {
-    listen 80;
-    server_name henryge.com www.henryge.com;
-    return 301 https://$host$request_uri;
-}
+CI/CD 由 GitHub Actions 负责：
 
-server {
-    listen 443 ssl;
-    server_name henryge.com www.henryge.com;
+- PR 或手动触发时运行 `pnpm lint` 和 `pnpm build`
+- `main` 分支更新或手动触发时构建 Docker image 并推送到 GHCR
+- 如果配置了部署 secrets，会通过 SSH 拉取当前 commit 对应的 image 并重启容器
 
-    ssl_certificate /etc/letsencrypt/live/henryge.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/henryge.com/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+需要的部署 secrets：
 
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-    }
-}
-```
+- `DEPLOY_HOST`
+- `DEPLOY_USER`
+- `DEPLOY_SSH_KEY`
+- `DEPLOY_PORT`，可选
+- `GHCR_USERNAME`
+- `GHCR_TOKEN`
 
-## CI/CD
-
-- CI runs on pull requests or manual dispatch (lint + build).
-- CD runs on `main` or manual dispatch, builds and pushes a Docker image to GHCR, then deploys over SSH if secrets are set.
-- Docker builds use GitHub Actions cache and the server deploys the immutable `${GITHUB_SHA}` image tag instead of relying on a mutable `latest` pull.
-
-Required secrets for deployment:
-
-- `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, optional `DEPLOY_PORT`
-- `GHCR_USERNAME`, `GHCR_TOKEN`
-
-Deploy steps (high level):
-
-1) Build Docker image from `Dockerfile`.
-2) Push to `ghcr.io/<owner>/<repo>`.
-3) SSH to the server and run:
-   - `docker pull ghcr.io/<owner>/<repo>:<commit-sha>`
-   - restart container `henrys-blog-next` on port `3000:3000`
-
-## Notes
-
-- Production runs via Docker on port 3000; Nginx can reverse proxy to it.
-- TypeScript build errors are ignored for deployment (`next.config.ts`).
-- Next.js output mode is `standalone` to reduce image size and speed up pulls.
-
-## Manual deployment (local build + upload)
-
-Build the Next.js standalone release locally, upload it to the server, and switch the remote `systemd` service:
+也可以使用本地构建上传流程：
 
 ```bash
-pnpm run deploy
+pnpm deploy
 ```
 
-`scripts/deploy-local.sh` uploads the existing local build output by default. Use `BUILD_SOURCE=clean ./scripts/deploy-local.sh` to keep the old clean `HEAD` build flow.
+`scripts/deploy-local.sh` 默认上传现有本地 build output。使用 `BUILD_SOURCE=clean ./scripts/deploy-local.sh` 可以保留旧的 clean `HEAD` 构建流程。
