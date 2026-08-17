@@ -1,12 +1,36 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 
 const SCALE = 200
 const LENGTH = 10
 const SPACING = 15
 
 interface Point { x: number, y: number, opacity: number }
+
+type BackgroundMode = 'dots' | 'grid'
+type BackgroundScope = 'site' | 'resume'
+
+function isResumePath(pathname: string) {
+  return pathname === '/resume' || pathname.startsWith('/resume/')
+}
+
+function pickBackgroundMode(): BackgroundMode {
+  return Math.random() < 0.5 ? 'dots' : 'grid'
+}
+
+function getBackgroundState(): { mode: BackgroundMode, scope: BackgroundScope } {
+  const { dataset } = document.documentElement
+  const mode = dataset.backgroundMode === 'grid' ? 'grid' : 'dots'
+  const scope = dataset.backgroundScope === 'resume' ? 'resume' : 'site'
+
+  return { mode, scope }
+}
+
+function shouldDrawDots({ mode, scope }: { mode: BackgroundMode, scope: BackgroundScope }) {
+  return scope === 'resume' || mode === 'dots'
+}
 
 function hash3(x: number, y: number, z: number) {
   const v = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453
@@ -60,9 +84,20 @@ function buildPoints(width: number, height: number) {
 }
 
 export default function DotsBackground() {
+  const pathname = usePathname()
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const pointsRef = useRef<Point[]>([])
   const rafRef = useRef<number | null>(null)
+
+  useLayoutEffect(() => {
+    const isResume = isResumePath(pathname)
+    const { dataset } = document.documentElement
+
+    dataset.backgroundScope = isResume ? 'resume' : 'site'
+    if (!isResume && dataset.backgroundMode !== 'dots' && dataset.backgroundMode !== 'grid') {
+      dataset.backgroundMode = pickBackgroundMode()
+    }
+  }, [pathname])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -96,11 +131,18 @@ export default function DotsBackground() {
       const height = window.innerHeight
       const t = animated ? Date.now() / 2500 : 0
       const isDark = document.documentElement.classList.contains('dark')
+      const backgroundState = getBackgroundState()
       const dotRgb = isDark ? '120, 120, 120' : '180, 180, 180'
 
       ctx.clearRect(0, 0, width, height)
-      ctx.fillStyle = isDark ? '#000000' : '#ffffff'
-      ctx.fillRect(0, 0, width, height)
+      if (!shouldDrawDots(backgroundState)) {
+        return
+      }
+
+      if (backgroundState.scope === 'resume') {
+        ctx.fillStyle = isDark ? '#000000' : '#ffffff'
+        ctx.fillRect(0, 0, width, height)
+      }
 
       for (const p of pointsRef.current) {
         const nx = p.x / SCALE
@@ -133,7 +175,7 @@ export default function DotsBackground() {
     const syncAnimation = () => {
       stopAnimation()
 
-      if (motionQuery.matches || document.hidden) {
+      if (!shouldDrawDots(getBackgroundState()) || motionQuery.matches || document.hidden) {
         drawFrame(false)
         return
       }
@@ -150,15 +192,25 @@ export default function DotsBackground() {
         drawFrame(false)
       }
     }
-    const handleThemeChange = () => {
+    const handleAttributeChange = (mutations: MutationRecord[]) => {
+      const backgroundChanged = mutations.some(
+        mutation => mutation.attributeName === 'data-background-mode'
+          || mutation.attributeName === 'data-background-scope',
+      )
+
+      if (backgroundChanged) {
+        syncAnimation()
+        return
+      }
+
       if (motionQuery.matches || document.hidden) {
         drawFrame(false)
       }
     }
-    const themeObserver = new MutationObserver(handleThemeChange)
+    const themeObserver = new MutationObserver(handleAttributeChange)
     themeObserver.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class'],
+      attributeFilter: ['class', 'data-background-mode', 'data-background-scope'],
     })
 
     window.addEventListener('resize', handleResize)
@@ -175,10 +227,9 @@ export default function DotsBackground() {
   }, [])
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="pointer-events-none fixed inset-0 -z-10"
-      aria-hidden="true"
-    />
+    <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+      <div className="site-background-grid absolute inset-0" />
+      <canvas ref={canvasRef} className="site-background-canvas pointer-events-none absolute inset-0" />
+    </div>
   )
 }

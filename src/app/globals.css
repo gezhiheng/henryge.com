@@ -141,6 +141,31 @@
   }
 }
 
+.site-background-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--foreground) 1.8%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 1.8%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px;
+  background-position: 0 0, 0 0;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 26%, rgba(0, 0, 0, 0.82) 46%, rgba(0, 0, 0, 0.28) 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 26%, rgba(0, 0, 0, 0.82) 46%, rgba(0, 0, 0, 0.28) 78%, transparent 100%);
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  opacity: 0;
+}
+
+html[data-background-scope='site'][data-background-mode='grid'] .site-background-grid {
+  opacity: 1;
+}
+
+html[data-background-scope='resume'] .site-background-grid {
+  display: none;
+}
+
 @keyframes page-slide-enter {
   from {
     opacity: 0;

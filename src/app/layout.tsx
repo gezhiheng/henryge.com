@@ -55,6 +55,11 @@ export default function RootLayout({
   const theme = storedTheme === "dark" || (!storedTheme && prefersDark) ? "dark" : "light";
   document.documentElement.classList.toggle("dark", theme === "dark");
   document.documentElement.style.colorScheme = theme;
+  const isResume = window.location.pathname === "/resume" || window.location.pathname.startsWith("/resume/");
+  document.documentElement.dataset.backgroundScope = isResume ? "resume" : "site";
+  if (!isResume) {
+    document.documentElement.dataset.backgroundMode = Math.random() < 0.5 ? "dots" : "grid";
+  }
   try {
     const pageEnterKey = "page-enter:" + window.location.pathname;
     const isFirstVisit = sessionStorage.getItem(pageEnterKey) !== "1";
