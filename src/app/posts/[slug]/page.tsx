@@ -102,7 +102,7 @@ export default async function PostPage({ params }: PostPageProps) {
       {postBadge
         ? (
             <footer className="flex justify-end">
-              <div className="w-32 shrink-0 p-0.5 opacity-70 sm:w-36 dark:opacity-65">
+              <div className="w-[7.2rem] shrink-0 p-0.5 opacity-70 sm:w-[8.1rem] dark:opacity-65">
                 <div
                   role="img"
                   aria-label={postBadge.label}
