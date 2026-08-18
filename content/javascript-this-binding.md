@@ -3,6 +3,7 @@ title: "JavaScript中的this指向"
 description: "How 'this' works in JavaScript"
 date: "2024-07-10"
 tags: ["JavaScript", "笔记"]
+badge: "made-by-human"
 ---
 
 this指向有以下几条规律

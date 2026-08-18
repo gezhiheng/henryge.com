@@ -3,6 +3,7 @@ title: "JavaScript闭包函数"
 description: "Javascript closure function"
 date: "2024-04-11"
 tags: ["JavaScript", "笔记"]
+badge: "made-by-human"
 ---
 
 ## 问题

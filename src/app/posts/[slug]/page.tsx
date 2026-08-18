@@ -1,4 +1,8 @@
 import type { Metadata } from 'next'
+import type { PostBadgeId } from '@/lib/posts'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import process from 'node:process'
 import { notFound } from 'next/navigation'
 import BackLink from '@/components/back-link'
 import PostImageLightbox from '@/components/post-image-lightbox'
@@ -11,6 +15,21 @@ interface PostPageProps {
   params: Promise<{
     slug: string
   }>
+}
+
+function readPublicSvg(fileName: string) {
+  return readFileSync(join(process.cwd(), 'public', fileName), 'utf8')
+}
+
+const postBadgesById: Record<PostBadgeId, { label: string, svg: string }> = {
+  'made-by-human': {
+    label: 'Made by Human',
+    svg: readPublicSvg('made-by-human.svg'),
+  },
+  'co-created-with-ai': {
+    label: 'Co-created with AI',
+    svg: readPublicSvg('co-created-with-ai.svg'),
+  },
 }
 
 export function generateStaticParams() {
@@ -43,6 +62,8 @@ export default async function PostPage({ params }: PostPageProps) {
   if (!post) {
     notFound()
   }
+
+  const postBadge = post.badge ? postBadgesById[post.badge] : null
 
   return (
     <article className="mx-auto max-w-3xl space-y-8">
@@ -77,6 +98,21 @@ export default async function PostPage({ params }: PostPageProps) {
         }}
       />
       <PostImageLightbox containerId="post-content" />
+
+      {postBadge
+        ? (
+            <footer className="flex justify-end">
+              <div className="w-32 shrink-0 p-0.5 opacity-70 sm:w-36 dark:opacity-65">
+                <div
+                  role="img"
+                  aria-label={postBadge.label}
+                  className="block dark:invert [&>svg]:block [&>svg]:h-auto [&>svg]:w-full [&>svg]:overflow-visible"
+                  dangerouslySetInnerHTML={{ __html: postBadge.svg }}
+                />
+              </div>
+            </footer>
+          )
+        : null}
 
       <BackLink
         fallbackHref="/posts"

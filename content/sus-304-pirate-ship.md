@@ -3,6 +3,7 @@ title: "有意思的一本书：《不锈钢海盗船》"
 description: "一本关于后厨、厨师与餐厅生活的人文纪实"
 date: "2026-06-21"
 tags: ["读书"]
+badge: "made-by-human"
 ---
 
 ![pic](/images/posts/sus-304-pirate-ship/cover.jpg)

@@ -3,6 +3,7 @@ title: "理解期约(Promise)"
 description: "Learn about Promise"
 date: "2024-07-18"
 tags: ["JavaScript", "笔记"]
+badge: "made-by-human"
 ---
 
 Promise会被**兑现**和**拒绝**，调用Promise的`then()`方法时，传入两个回调函数，第一个回调函数被调用则Promise**兑现**了，第二个回调函数被调用时则Promise被**拒绝**了。

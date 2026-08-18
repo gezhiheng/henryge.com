@@ -3,6 +3,7 @@ title: "球鞋的黄金时代"
 description: "每个时代都有属于自己的球鞋故事"
 date: "2025-06-10"
 tags: ["想法"]
+badge: "co-created-with-ai"
 ---
 
 这篇文章的灵感来自于上个星期在B站上刷到XCin与TanZ合作的[视频](https://www.bilibili.com/video/BV1JjoXYwEvE/?spm_id_from=333.1387.upload.video_card.click&vd_source=f07456b9b9e24081429e3d0286575fa3)，该视频有提到关于球鞋的黄金时代。他们认为球鞋的黄金时代，是移动互联网爆发前、纸媒流行的时候。

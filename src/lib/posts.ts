@@ -13,10 +13,15 @@ import { visit } from 'unist-util-visit'
 import { formatDate, formatReadingTime } from '@/lib/format'
 import { siteConfig } from '@/lib/site'
 
+export const postBadgeIds = ['made-by-human', 'co-created-with-ai'] as const
+
+export type PostBadgeId = typeof postBadgeIds[number]
+
 export interface PostFrontmatter {
   title: string
   description: string
   date: string
+  badge?: PostBadgeId
   image?: string
   tags?: string[]
 }
@@ -99,6 +104,18 @@ function getPostFilePaths() {
 
 function getSlugFromFileName(fileName: string) {
   return fileName.replace(/\.md$/, '')
+}
+
+function getPostBadge(value: unknown): PostBadgeId | undefined {
+  if (typeof value !== 'string') {
+    return undefined
+  }
+
+  if (!postBadgeIds.includes(value as PostBadgeId)) {
+    return undefined
+  }
+
+  return value as PostBadgeId
 }
 
 function getDateMonthsAgo(referenceDate: Date, months: number) {
@@ -387,6 +404,7 @@ export function getAllPosts(): PostMeta[] {
       title: String(data.title),
       description: String(data.description),
       date: String(data.date),
+      badge: getPostBadge(data.badge),
       image: typeof data.image === 'string' ? data.image : undefined,
       tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
       readingTime: formatReadingTime(stats.minutes),
@@ -450,6 +468,7 @@ export function getPostBySlug(slug: string): Post | null {
     title: String(data.title),
     description: String(data.description),
     date: String(data.date),
+    badge: getPostBadge(data.badge),
     image: typeof data.image === 'string' ? data.image : undefined,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     readingTime: formatReadingTime(stats.minutes),

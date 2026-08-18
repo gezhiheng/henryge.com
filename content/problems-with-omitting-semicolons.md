@@ -3,6 +3,7 @@ title: "JavaScript不写分号时出现的问题"
 description: "Issues Caused by Omitting Semicolons When Using Generators in JavaScript"
 date: "2022-12-12"
 tags: ["JavaScript", "笔记"]
+badge: "made-by-human"
 ---
 
 ## 问题
