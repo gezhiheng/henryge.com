@@ -15,18 +15,18 @@ export const tagStyles: Record<string, string> = {
 
 const projects = [
   {
+    title: 'openspec-impact',
+    href: 'https://www.npmjs.com/package/openspec-impact',
+    img: '/images/projects-intro/osi.png',
+    description: '在 SDD 开发范式中评估需求影响范围',
+    tags: ['CLI', 'OpenSpec', 'Skill'],
+  },
+  {
     title: 'Pipto',
     href: 'https://pipto.henryge.com/',
     img: '/images/projects-intro/pipto.png',
     description: '结构优先的 JSON/PPT 转换工具链',
     tags: ['PPT', 'JSON'],
-  },
-  {
-    title: 'ibuild',
-    href: 'https://github.com/gezhiheng/ibuild',
-    img: '/images/projects-intro/ibuild.png',
-    description: '一个 Rust CLI 工具，用于构建多个前端项目并将它们的产物合并到同一个 dist 目录下',
-    tags: ['Rust', 'CLI'],
   },
   {
     title: 'Targiyio',
@@ -48,6 +48,13 @@ const projects = [
     img: '/images/projects-intro/hdrivegui.png',
     description: 'HDriveGUI 是一款基于 Vue 3 + Vite 开发的可视化上位机软件',
     tags: ['串口通信', 'Vue'],
+  },
+  {
+    title: 'ibuild',
+    href: 'https://github.com/gezhiheng/ibuild',
+    img: '/images/projects-intro/ibuild.png',
+    description: '一个 Rust CLI 工具，用于构建多个前端项目并将它们的产物合并到同一个 dist 目录下',
+    tags: ['Rust', 'CLI'],
   },
   {
     title: 'crt-fe',
