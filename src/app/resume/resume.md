@@ -102,6 +102,7 @@ JSON 驱动演示文稿平台
 
 ## 开源经历
 
+- openspec-impact 在 SDD 开发范式中评估需求影响范围 [npm](https://www.npmjs.com/package/openspec-impact)
 - 独立开发并开源 Pipto，提供 JSON-native 演示文稿 workspace，包含官网、playground 与 JSON/PPTX 转换、浏览器预览等 npm 包，核心包 json2pptx 周下载 **600+** [npm](https://www.npmjs.com/package/json2pptx)
 - markstream-vue 流式渲染库部分 Bug 修复和文档修复 [GitHub](https://github.com/gezhiheng/vue-markdown-renderer)
 - 独立发布 npm 包 crt-fe 快速初始化前端项目，周下载 **200+** [npm](https://www.npmjs.com/package/crt-fe)
